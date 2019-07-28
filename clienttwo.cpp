@@ -68,6 +68,7 @@ void ClientTwo::Connect()
 
     bufferevent *buffer = bufferevent_socket_new(m_base,fd,BEV_OPT_CLOSE_ON_FREE);
     bufferevent_setcb(buffer,buffer_read_cb,NULL,NULL,NULL);
+    bufferevent_enable(buffer,EV_READ|EV_PERSIST);
 
     char msg[] = "This message is from client!";
     bufferevent_write(buffer,msg,strlen(msg));
