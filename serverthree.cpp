@@ -10,11 +10,13 @@ void socket_read_cb3(bufferevent* bev, void* arg)
     msg[len] = '\0';
     std::cout<<"recv : "<<msg<<" from "<<bufferevent_getfd(bev)<<std::endl;
 
+    char sendm[1024];
     User::User user;
     user.set_name("jack");
     user.set_id(123);
     user.set_sex(true);
-    bufferevent_write(bev,(void*)&user,sizeof(user));
+    user.SerializeToArray(sendm,1024);
+    bufferevent_write(bev,&sendm,sizeof(sendm));
 
 }
 

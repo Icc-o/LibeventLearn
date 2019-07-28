@@ -9,12 +9,14 @@
 
 void client_three_read_cb(bufferevent* bev, void*arg)
 {
-    char* msg[4096];
+    char msg[4096];
     size_t len = bufferevent_read(bev,msg,sizeof(msg));
     if(len<=0)
         std::cout<<"read size < 0"<<std::endl;
-    User::User user = *(User::User*)msg;
-    cout<<"recv msg :"<<user.name()<<" "<<user.id()<<" "<<user.sex()<<std::endl;
+    User::User user;
+    user.ParseFromArray(msg,1024);
+    std::cout<<"msg: "<<msg<<std::endl;
+    std::cout<<"recv msg :"<<user.name()<<" "<<user.id()<<" "<<user.sex()<<std::endl;
 }
 
 void client_three_input_cb(int fd, short events, void* arg)
@@ -23,7 +25,7 @@ void client_three_input_cb(int fd, short events, void* arg)
     size_t len = read(fd,sendMsg,sizeof(sendMsg));
     if(len<0)
     {
-        cout<<"get input failed!"<<endl;
+        std::cout<<"get input failed!"<<std::endl;
         return;
     }
     int sockfd = *(int*)arg;
@@ -48,13 +50,14 @@ void ClientThree::Connect()
     sockaddr_in serAddr;
     bzero(&serAddr,sizeof(serAddr));
     serAddr.sin_family = AF_INET;
-    if(inet_aton(ip.c_str(),serAddr.sin_addr) == 0)
+    serAddr.sin_port = htons(static_cast<ServerConfigs*>(ServerConfigs::getInstance())->getPort());
+    if(inet_aton(ip.c_str(),&serAddr.sin_addr) == 0)
     {
         std::cout<<"invalid server address!"<<std::endl;
         return;
     }
 
-    m_fd = socket(AF_INET,SOCK_STREAM,nullptr);
+    m_fd = socket(AF_INET,SOCK_STREAM,NULL);
     if(connect(m_fd,(sockaddr*)&serAddr,sizeof(serAddr)) == -1)
     {
         std::cout<<"connect failed"<<std::endl;
