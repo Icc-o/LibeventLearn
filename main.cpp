@@ -7,6 +7,7 @@
 
 #include "configs/Configs.h"
 #include "third-party/pugixml.hpp"
+#include "Log/MyLog.h"
 
 using namespace std;
 
@@ -20,6 +21,8 @@ int main(int argc, char* argv)
     pugi::xml_node ser_config = doc.child("root");
     ServerConfigs::getInstance()->getMsgFromXmlNode(ser_config.child("server"));
     ClientConfigs::getInstance()->getMsgFromXmlNode(ser_config.child("client"));
+
+    Mylog::getInstance()->init("server.log");
 
 //    ServerOne one;
 //    one.init();

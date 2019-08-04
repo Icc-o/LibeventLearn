@@ -1,6 +1,7 @@
 #include "serverthree.h"
 #include "configs/protos/User.pb.h"
 #include "configs/Configs.h"
+#include "Log/MyLog.h"
 
 //收到消息之后发送一个user给对方
 void socket_read_cb3(bufferevent* bev, void* arg)
@@ -65,5 +66,6 @@ void ServerThree::init()
                                          10,
                                          (sockaddr*)&serAddr,
                                          sizeof(sockaddr_in));
+    LOG_DBG("server init finished!");
     event_base_dispatch(m_base);
 }
